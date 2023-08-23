@@ -1,0 +1,169 @@
+{% extends 'layout.html' %}
+{% load crispy_forms_tags %}
+{% block body_url %}
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a href="#" class="active">Catalog</a></li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="card ml-5 mr-5 p-4">
+        <div class="card-body">
+            <form method="post" action="." enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-2">
+                        <h4><span class="badge badge-secondary">{{ entity }}</span></h4>
+                    </div>
+                    <div class="col">
+                        <hr>
+                    </div>
+                </div>
+                <input type="hidden" name="action" value="{{ action }}">
+                {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h5><i class="icon fas fa-ban"></i> Ha ocurrido un error al querer guardar el registro</h5>
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="exampleInputName">Nombre</label>
+                    {{ form.name }}
+                    <small id="nameHelp" class="form-text text-muted">Ingrese el nombre de la categoria</small>
+                </div>
+                <div class="form-group form-check">
+                    {{ form.state }}
+                    <label class="form-check-label" for="exampleCheck1">Activo</label>
+                    <small id="nameHelp" class="form-text text-muted">Seleccione el estado del catalogo</small>
+                </div>
+                <!--second-form-->
+                {% with named_formsets.catalog_item as formset %}
+                    <div class="row">
+                        <div class="col-sm-3 col-xl-2">
+                            <h4><span class="badge badge-secondary">{{ second_entity }}</span></h4>
+                        </div>
+                        <div class="col">
+                            <hr>
+                        </div>
+                    </div>
+                    {{ formset.management_form }}
+                    <script type="text/html" id="catalog_item-template">
+                        <tr id="catalog_item-_prefix_" class=hide_all>
+                            {% for fields in formset.empty_form.hidden_fields %}
+                                {{ fields }}
+                            {% endfor %}
+
+                            {% for fields in formset.empty_form.visible_fields %}
+                                <td>{{ fields }}</td>
+                            {% endfor %}
+                        </tr>
+                    </script>
+                    <div class="table-responsive card mt-4">
+                        <table class="table card-header text-center">
+                            <thead class="text-secondary">
+                            <th scope="col" style="width: 10%;">Nombre
+                                <span style="color: red" class="required">*</span>
+                            </th>
+                            <th scope="col" style="width: 10%;">Abreviatura
+                                <span style="color: red;" class="required">*</span>
+                            </th>
+                            </thead>
+                            <tbody id="item-catalog_item">  <!-- id="item-inlineformsetname" -->
+                            <!-- formset non forms errors -->
+                            {% for error in formset.non_form_errors %}
+                                <span style="color: red">{{ error }}</span>
+                            {% endfor %}
+
+                            {% for formss in formset %}
+                                {{ formss.management_form }}
+                                <tr id="catalog_item-{{ forloop.counter0 }}" class=hide_all>
+                                    {{ formss.id }}
+                                    <div class="row">
+                                        <div class="form-group col-6">
+                                            {{ formss.imagen }}
+                                            <hr>
+                                            {{ formss.orientacion }}
+                                        </div>
+                                        <div class="col-6">
+                                           resultado
+                                        </div>
+                                    </div>
+                                   
+
+                                    {% if formss.instance.pk %}
+                                        <td>
+                                            <button type="button" class="btn btn-outline-danger" data-toggle="modal"
+                                                    data-target="#exampleModal{{ formss.instance.external_id }}">
+                                                Delete
+                                            </button>
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="exampleModal{{ formss.instance.external_id }}"
+                                                 tabindex="-1" role="dialog"
+                                                 aria-labelledby="exampleModalLabel{{ formss.instance.external_id }}"
+                                                 aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                id="exampleModalLabel{{ formss.instance.external_id }}">
+                                                                Are
+                                                                Your
+                                                                Sure You Want To Delete This?</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <a href="{% url 'core:catalog_item_delete' formss.instance.external_id %}"
+                                                               type="button" class="btn btn-danger">Yes, Delete</a>
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-dismiss="modal">Close
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <a href="#" id="add-catalog_item-button" class="btn btn-secondary add-catalog_item">Añadir
+                            Mas</a>
+                        <!-- id="add-inlineformsetname-button" -->
+                    </div>
+                {% endwith %}
+
+                <button type="submit" class="btn btn-primary">Confirmar</button>
+                <a href="#" class="btn btn-outline-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // when user clicks add more btn of variants
+            $('.add-catalog_item').click(function (ev) {
+                ev.preventDefault();
+                var count = $('#item-catalog_item').children().length;
+                var tmplMarkup = $('#catalog_item-template').html();
+                var compiledTmpl = tmplMarkup.replace(/_prefix_/g, count);
+                $('#item-catalog_item').append(compiledTmpl);
+
+                // update form count
+                $('#id_catalog_item-TOTAL_FORMS').attr('value', count + 1);
+            });
+        });
+    </script>
+{% endblock %}

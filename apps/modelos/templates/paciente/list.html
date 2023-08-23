@@ -1,0 +1,31 @@
+{% extends 'list.html' %}
+{% load static %}
+{% block head_list %}
+    <script src="{% static 'catalog/js/list.js' %}"></script>
+{% endblock %}
+
+{% block body_url %}
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'core:pacientes_list' %}" class="active">Catalog</a></li>
+    </ol>
+{% endblock %}
+
+{% block columns %}
+    <tr>
+        <th scope="col" style="width: 10%;">#</th>
+        <th scope="col" style="width: 20%;">Nombre</th>
+        <th scope="col" style="width: 20%;">Cedula</th>
+        <th scope="col" style="width: 30%;">Opciones</th>
+    </tr>
+{% endblock %}
+
+{% block rows %}
+
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}
+
+
