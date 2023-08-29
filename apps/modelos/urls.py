@@ -18,6 +18,7 @@ urlpatterns = [
 
      path('mamografia/create/<str:external>/',
           MamografiaCreate.as_view(), name='mamografia_create'),
+     #LISTAR MAMOGRAFIA
 
      path('login/', LoginView.as_view(), name='login'),
      path('logout/', LogoutView.as_view(next_page='core:login'),name='logout'),
