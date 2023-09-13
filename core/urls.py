@@ -23,7 +23,8 @@ from apps.home.views import Home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', Home.as_view(), name='index'),
+    #path('', Home.as_view(), name='index'),
     path('core/', include('apps.modelos.urls')),
 ]
+
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

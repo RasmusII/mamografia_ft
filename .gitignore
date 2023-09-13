@@ -1,5 +1,6 @@
 migrations/
 media/
+__pycache__/*
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
