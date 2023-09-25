@@ -59,6 +59,7 @@ MIDDLEWARE = [
 
 AUTH_USER_MODEL = 'modelos.CustomUser'
 ROOT_URLCONF = 'core.urls'
+GLOBAL_LOADED_MODEL = None
 
 TEMPLATES = [
     {

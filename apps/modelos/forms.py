@@ -124,17 +124,25 @@ class PacienteForm(forms.ModelForm):
 
 
 class MamografiaForm(forms.ModelForm):
-    def _init_(self, *args, **kwargs):
-        super()._init_(*args, **kwargs)
-        self.fields["imagen"].widget.attrs["autofocus"] = True
-        self.fields["imagen"].widget.attrs["required"] = True
+    LADO_CHOICES = (
+        ("", "Seleccione un lado mamario"),
+        (0, "Derecha"),
+        (1, "Izquierda"),
+    )
+    lado_mamario = (
+        forms.ChoiceField(
+            choices=LADO_CHOICES,
+            widget=forms.Select(attrs={"id": "lado_mamario", "class": "form-control"}),
+            required=True,
+        ),
+    )
 
     class Meta:
         model = Mamografia
         fields = "__all__"
         exclude = ["createdAt", "updatedAt", "paciente"]
         widgets = {
-            "resultados": forms.TextInput(
+            "resultado": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "placeholder": "Ingrese el nombre de la categoria",
@@ -169,8 +177,12 @@ class MamografiaImageForm(forms.ModelForm):
 
 
 class MamografiaUploadForm(forms.ModelForm):
+    """
+    Formulario para la subida de mamografias
+    """
+
     LADO_CHOICES = (
-        ('', 'Seleccione un lado'),
+        ("", "Seleccione un lado"),
         (0, "derecha"),
         (1, "izquierda"),
     )
@@ -200,19 +212,21 @@ class MamografiaUploadForm(forms.ModelForm):
                     "accept": ".png, .jpg, .jpeg",
                 }
             ),
+            "descripcion": forms.Textarea(
+                attrs={"class": "form-control", "row": "1", "cols": "5"}
+            ),
             "paciente": forms.TextInput(
                 attrs={
-                    "type": "text",
+                    "type": "hidden",
                     "id": "paciente",
                     "name": "paciente",
-                    "class": "form-control"
+                    "class": "form-control",
                 }
             ),
         }
-    
-    def __init__(self, external, *args, **kwargs):
-        #external = kwargs.pop('external', None)
-        print(external)
-        super().__init__(*args, **kwargs)
-        self.fields["paciente"].initial = external
 
+    def __init__(self, external=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if external is not None:
+            self.fields["paciente"].initial = external
+            self.fields["descripcion"].initial = external

@@ -1,20 +1,12 @@
-from datetime import datetime
-from django.conf import settings
-from apps.modelos.models import (
-    Paciente,
-    MamografiaUploadFile,
-    Mamografia,
-    MamografiaImage,
-)
-import os
 import cv2
+from django.conf import settings
 
-# Importacion Tensorflow
-import tensorflow as tf
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import img_to_array
+from apps.modelos.models import MamografiaUploadFile
 
 from core.settings.develop import MEDIA_URL, BASE_DIR
+from apps.modelos.apps import (
+    model_loaded_signal,
+)  # Importa la señal personalizada desde tu aplicación
 
 
 class MamografiaAppService(object):
@@ -26,18 +18,13 @@ class MamografiaAppService(object):
     def procesar_datos(mamografia_upload):
         horizontal = f"{settings.MEDIA_ROOT}/{mamografia_upload.imagen_horizontal.name}"
         vertical = f"{settings.MEDIA_ROOT}/{mamografia_upload.imagen_vertical.name}"
-        predecir(horizontal, vertical, mamografia_upload)
+
+        return predecir(horizontal, vertical)
 
 
-def predecir(horizontal, vertical, object):
+def predecir(horizontal, vertical):
     try:
-        model = f"{BASE_DIR}{MEDIA_URL}modelo/modelo_deteccion_Cancer_mama_densenet_final.h5"
-        modelo = load_model(model)
-        modelo.compile(
-            optimizer=tf.keras.optimizers.Adam(1e-4),
-            loss=tf.keras.losses.BinaryCrossentropy(),
-            metrics=["accuracy"],
-        )
+        loaded_model = settings.GLOBAL_LOADED_MODEL
 
         images = []
         predictions = []
@@ -50,24 +37,11 @@ def predecir(horizontal, vertical, object):
         )
 
         for i in images:
-            predictions.append(float(modelo.predict(i[(None, ...)])))
+            predictions.append(float(loaded_model.predict(i[(None, ...)])))
 
-        print("preccin ", predictions)
-        if predictions[0] > 0.5 or predictions[1] > 0.5:
-            return Mamografia.objects.create(
-                orientacion=object.lado_mamario,
-                resultado=1,
-                descripcion="Cancer",
-                paciente=Paciente.objects.get(external_id=object.paciente),
-            )
+        print(predictions)
+        
+        return predictions
 
-        return Mamografia.objects.create(
-            orientacion=object.lado_mamario,
-            resultado=0,
-            descripcion="Sin Cancer",
-            paciente=Paciente.objects.get(external_id=object.paciente),
-        )
-
-    except Exception as e:
-        print("ERROR %s" % e)
-        print("error ctm")
+    except Exception as error:
+        print("ERROR", error)

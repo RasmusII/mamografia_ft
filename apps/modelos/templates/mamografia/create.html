@@ -11,82 +11,47 @@
 {% block content %}
 
 <div class="card ml-5 mr-5 p-4">
-    {% if not mamografia %}
+
     <div class="card-body">
-        <h3><span class="badge bg-primary mr-4">Paciente Seleccionado: </span>{{paciente|title}}</h3>
-
-        <form method="post" action="" enctype="multipart/form-data">
-            <input type="hidden" value="{{action}}" name="action">
-            <div class="form-group">
-              
-                {{ form.paciente}}
-            </div>
-            <div class="form-group">
-                <label for="lado_mamario">Lado mamario</label>
-                {{ form.lado_mamario}}
-            </div>
-            <div class="row">
-                <div class="form-group col-6">
-                    <h4><span class="badge bg-secondary mr-4">Vertical </span></h4>
-
-                    <div class="col-6 text-center">
-                        <img src="{% static '\img\empty.png' %}" width="400px" height="300px" id="image_right">
-                    </div>
-                    {{ form.imagen_horizontal }}
+        <form method="post" action=".">
+            <div class="row d-flex justify-content-start align-items-start">
+                <div class="form-group col-12">
+                    <label for="id_resultado">Lado Mamario</label>
+                    <select name="lado_mamario" id="id_lado_mamario" class="form-control">
+                        <option value="">Seleccione</option>
+                        <option value="0" {%if mamografia.lado_mamario == 0 %} selected {% endif %}> Mama Derecha</option>
+                        <option value="1" {%if mamografia.lado_mamario == 1 %} selected {% endif %}> Mama Izquierda</option>
+                    </select>
                 </div>
-                <div class="form-group col-6">
-                    <h4><span class="badge bg-secondary mr-4">Horizontal </span></h4>
-                    <div class="col-6  text-center">
-                        <img src="{% static '\img\empty.png' %}" width="400px" height="300px" id="image_left">
-                    </div>
-                    {{ form.imagen_vertical}}
+                <div class="col-6 ">
+                    <h3><span class="badge bg-primary mr-4">Vertical </span></h3>
+                    <img src="{% if mamografia.imagen_vertical %} {{mamografia.imagen_vertical.url}} {% else %} {{imagen.1.imagen.url}} {% endif %}" width="400px" height="300px" id="image_left">
+                </div>
+                <div class="col-6">
+                    <h3><span class="badge bg-primary mr-4">Horizontal </span></h3>
+                    <img src="{% if mamografia.imagen_horizontal %} {{mamografia.imagen_horizontal.url}} {% else %} {{imagen.0.imagen.url}} {% endif %}" width="400px" height="300px" id="image_right">
                 </div>
             </div>
             <hr>
+            <div class="form-group">
+                <label for="id_resultado">Resultado</label>
+                <select name="resultado" id="id_resultado" class="form-control">
+                    <option value="">Seleccione</option>
+                    <option value="0" {%if prediction == 0  or mamografia.resultado == 0 %} selected {% endif %}>Cancer</option>
+                    <option value="1" {%if prediction == 1 or mamografia.resultado == 1 %} selected {% endif %}>Normal</option>
+                </select>
+            </div>
 
             <div class="text-center p-2">
                 <button type="submit" class="btn btn-primary mr-3">Confirmar</button>
                 <a href="{% url 'core:pacientes_list' %}" class="btn btn-outline-secondary">Cancelar</a>
             </div>
-
         </form>
     </div>
-    {% else %}
-    <div class="row justify-content-center align-items-center">
-        <div  class="col-8 text-center">
-            <div class=" alert alert-warning" role="alert">
-                No tienes regisgrado ninguna mamografía, prueba a crearla 
-            </div>
-            <a href="#" class="btn btn-primary">
-                <i class="fas fa-plus"></i>  Añadir mamografia
-            </a>
-        </div>
-    </div>
-    {% endif %}
+
 </div>
 {% endblock %}
 
 {% block javascript %}
-<script type="text/javascript">
-    function readURL(input, image) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                // Asignamos el atributo src a la tag de imagen
-                $('#' + image).attr('src', e.target.result);
-                //$('#image_right').attr('src', e.target.result);
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
 
-    // El listener va asignado al input
-    $("#imagen_horizontal").change(function () {
-        readURL(this, "image_right");
-    });
-    $("#imagen_vertical").change(function () {
-        readURL(this, "image_left");
-    });
-
-</script>
 {% endblock %}

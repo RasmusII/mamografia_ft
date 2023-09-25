@@ -37,7 +37,6 @@ $(document).ready(() => {
                 render: (data, type, row) => {
                     let buttons = `<a href="/core/paciente/${row.id}/" class="btn btn-primary btn-xs btn-flat mr-2"><i class="fas fa-edit"></i></a>`;
                     buttons += `<a href="/core/mamografia/${row.external_id}/" type="button" class="btn btn-outline-warning btn-xs btn-flat mr-2"><i class="fas fa-solid fa-radiation"></i></a>`;                  
-                    buttons += `<a href="/core/catalog/delete/${row.id}/"  type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a>`;  
                     return buttons;
                 }
             }

@@ -1,16 +1,13 @@
 from django.urls import path
 
-from .views.login.views import LoginView
-from .views.signin.views import SignUpView
-from django.contrib.auth.views import LogoutView
 from apps.modelos.views.paciente.views import (
-   PacienteListView,
-   PacienteCreateView,
+   PacienteListView, PacienteCreateView,
    PacienteUpdateView,
 )
 
 from apps.modelos.views.mamografia.views import (
-   MamografiaUploadView, MamografiaListView
+   MamografiaUploadView, MamografiaListView,
+   MamografiaCreate, MamografiaUpdateView
 )
 
 app_name = "core"
@@ -24,11 +21,10 @@ urlpatterns = [
 
    # Mamografia
    path('mamografia/<str:external>/', MamografiaListView.as_view(), name='mamografia_list'),
-   path('mamografia/create/<str:external>/', MamografiaUploadView.as_view(), name='mamografia_create'),
+   path('mamografia/predict/<str:external>/', MamografiaUploadView.as_view(), name='mamografia_predict'),
+   path('mamografia/create/<int:result>/<int:mamografia>/', MamografiaCreate.as_view(), name='mamografia_create'),
+   path('mamografia/edit/<int:pk>/', MamografiaUpdateView.as_view(), name='mamografia_create'),
    
    
-   # LISTAR MAMOGRAFIA
-   #  path('login/', LoginView.as_view(), name='login'),
-   #  path('logout/', LogoutView.as_view(next_page='core:login'),name='logout'),
-   #  path('signup/', SignUpView.as_view(), name='signup'),
+   
 ]

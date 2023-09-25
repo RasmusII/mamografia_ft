@@ -91,8 +91,8 @@ class Paciente(models.Model):
 
 
 class Mamografia(models.Model):
-    NORMAL = 0
-    CANCER = 1
+    NORMAL = 1
+    CANCER = 0
 
     MAMA_RIGHT = 0
     MAMA_LEFT = 1
@@ -111,7 +111,7 @@ class Mamografia(models.Model):
     resultado = models.PositiveBigIntegerField(
         default=NORMAL, choices=LIST_STATE, blank=False, null=False
     )
-    orientacion = models.PositiveBigIntegerField(
+    lado_mamario = models.PositiveBigIntegerField(
         default=MAMA_RIGHT, choices=LIST_STATE_POS, blank=False, null=False
     )
     descripcion = models.CharField(max_length=1024, blank=True, null=True)
@@ -126,10 +126,10 @@ class Mamografia(models.Model):
         verbose_name = "mamografia"
         verbose_name_plural = "mamografias"
         ordering = ["pk"]
-        
+
     def toJSON(self):
         item = model_to_dict(self)
-        item['external_id'] = self.external_id
+        item["external_id"] = self.external_id
         return item
 
     def __str__(self):
@@ -157,7 +157,7 @@ class MamografiaImage(models.Model):
     createdAt = models.DateField("CreatedAt", auto_now=True, auto_now_add=False)
     updatedAt = models.DateField("UpdatedAt", auto_now=True, auto_now_add=False)
     mamografia = models.ForeignKey(
-        Mamografia, verbose_name="mamografia", on_delete=models.CASCADE
+        Mamografia, verbose_name="mamografia_image", on_delete=models.CASCADE
     )
 
     class Meta:
@@ -174,7 +174,7 @@ class MamografiaUploadFile(models.Model):
         (DERECHA, "Derecha"),
         (IZQUIERDA, "Izquierda"),
     )
-    
+
     imagen_horizontal = models.ImageField(
         upload_to="mamografia/%Y/%m/%d",
         null=True,
@@ -185,8 +185,10 @@ class MamografiaUploadFile(models.Model):
         upload_to="mamografia/%Y/%m/%d", null=True, blank=True, verbose_name="vertical"
     )
     lado_mamario = models.PositiveBigIntegerField(
-        default=DERECHA, choices=LIST_STATE,
+        default=DERECHA,
+        choices=LIST_STATE,
     )
+    descripcion = models.CharField(max_length=1024, blank=True, null=True)
     paciente = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:

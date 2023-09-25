@@ -6,9 +6,11 @@ from django.views.decorators.csrf import csrf_exempt
 from apps.modelos.models import Paciente
 from apps.modelos.forms import PacienteForm
 from django.views.generic import CreateView, UpdateView, ListView
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class PacienteListView(ListView):
+class PacienteListView(LoginRequiredMixin, ListView):
     model = Paciente
     template_name = 'paciente/list.html'
     
@@ -20,8 +22,7 @@ class PacienteListView(ListView):
         context['list_url'] =  reverse_lazy('core:pacientes_list')
         return context
 
-    @method_decorator(csrf_exempt)
-    # @method_decorator(login_required)
+    @method_decorator(csrf_exempt, login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -40,7 +41,7 @@ class PacienteListView(ListView):
         return JsonResponse(data, safe=False)
 
 
-class PacienteCreateView(CreateView):
+class PacienteCreateView(LoginRequiredMixin, CreateView):
     model = Paciente
     form_class = PacienteForm
     template_name = 'paciente/paciente_create_or_update.html'
@@ -54,7 +55,7 @@ class PacienteCreateView(CreateView):
         context['action'] = 'add'
         return context
 
-    @method_decorator(csrf_exempt)
+    @method_decorator(csrf_exempt, login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -74,7 +75,7 @@ class PacienteCreateView(CreateView):
         return JsonResponse(data, safe=False)
     
     
-class PacienteUpdateView(UpdateView):
+class PacienteUpdateView(LoginRequiredMixin, UpdateView):
     model = Paciente
     form_class = PacienteForm
     template_name = 'paciente/paciente_create_or_update.html'
