@@ -1,0 +1,6 @@
+Django==4.1.6
+Pillow==9.4.0
+numpy
+django-crispy_forms
+django-widget_tweaks
+tensorflow==2.10.0

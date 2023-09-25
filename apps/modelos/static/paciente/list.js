@@ -13,10 +13,10 @@ $(document).ready(() => {
             dataSrc: ""
         },
         columns: [
-            {"data": "id"},
-            {"data": "nombre"},
-            {"data": "cedula"},
-            {"data": null},
+            { "data": "id" },
+            { "data": "nombre" },
+            { "data": "cedula" },
+            { "data": null },
         ],
         columnDefs: [
             {
@@ -25,13 +25,18 @@ $(document).ready(() => {
                 orderable: true
             },
             {
+                targets: [1], render: (data, type, row) => {
+                    let html = `${row.nombre} ${row.apellido_paterno} ${row.apellido_materno}`;
+                    return html;
+                }
+            },
+            {
                 targets: [-1],
                 class: 'text-center',
                 orderable: false,
-                render: function (data, type, row) {
-                    var buttons = '<a href="/core/pacientes/edit/' + row.id + '/" class="btn btn-warning btn-xs btn-flat mr-2"><i class="fas fa-edit"></i></a> ';
-                    buttons += '<a href="/core/mamografia/create/' + row.external_id + '/" type="button" class="btn btn-outline-secondary btn-xs btn-flat mr-2"><i class="fas fa-trash-alt"></i></a>';
-                    buttons += '<a href="/core/catalog/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a>';
+                render: (data, type, row) => {
+                    let buttons = `<a href="/core/paciente/${row.id}/" class="btn btn-primary btn-xs btn-flat mr-2"><i class="fas fa-edit"></i></a>`;
+                    buttons += `<a href="/core/mamografia/${row.external_id}/" type="button" class="btn btn-outline-warning btn-xs btn-flat mr-2"><i class="fas fa-solid fa-radiation"></i></a>`;                  
                     return buttons;
                 }
             }

@@ -224,7 +224,7 @@ class MamografiaCreate(CreateView):
                 # procesar modelo
                 mamografia = Mamografia()
                 mamografia.resultado = request.POST['resultado']
-                mamografia.mama = 0
+                mamografia.lado_mamario = 0
                 mamografia.descripcion = request.POST['descripcion']
                 mamografia.paciente = paciente
                 mamografia.save()

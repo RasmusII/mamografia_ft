@@ -18,6 +18,9 @@ from django.urls import path, include
 
 from django.conf import settings
 from django.conf.urls.static import static
+from apps.modelos.views.login.views import LoginView
+from apps.modelos.views.signin.views import SignUpView
+from django.contrib.auth.views import LogoutView
 
 from apps.home.views import Home
 
@@ -25,5 +28,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', Home.as_view(), name='index'),
     path('core/', include('apps.modelos.urls')),
+    # LISTAR MAMOGRAFIA
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+    path('signup/', SignUpView.as_view(), name='signup'),
 ]
+
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
