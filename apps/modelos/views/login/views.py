@@ -6,7 +6,6 @@ from apps.modelos.models import *  # Importar solo los modelos necesarios o espe
 from django.views.decorators.csrf import csrf_exempt  
 
 
-
 class LoginView(LoginView):
     model = Mamografia
     fields = '__all__'
