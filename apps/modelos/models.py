@@ -130,6 +130,7 @@ class Mamografia(models.Model):
     def toJSON(self):
         item = model_to_dict(self)
         item["external_id"] = self.external_id
+        item["createdAt"] = self.createdAt
         return item
 
     def __str__(self):

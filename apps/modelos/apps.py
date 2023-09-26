@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 from django.db.models.signals import ModelSignal
 
+
 # Define una señal personalizada
 model_loaded_signal = ModelSignal()
 
@@ -13,15 +14,19 @@ def load_custom_model():
 
     # Ruta al modelo previamente entrenado
     MODEL_PATH = f"{BASE_DIR}{MEDIA_URL}modelo/modelo_deteccion_Cancer_mama_densenet_final.h5"
-
+    
     # Carga el modelo
     loaded_model = load_model(MODEL_PATH)
     loaded_model.compile(
             optimizer=tf.keras.optimizers.Adam(1e-4),
             loss=tf.keras.losses.BinaryCrossentropy(),
             metrics=["accuracy"],
-    )   
-
+    )
+    
+    with tf.device('/GPU:0'):
+        dummy_input = tf.constant([[[[0.0] * 3] * 224] * 224])
+        dummy_output = loaded_model(dummy_input)
+        
     settings.GLOBAL_LOADED_MODEL = loaded_model
 
     # Emite la señal personalizada

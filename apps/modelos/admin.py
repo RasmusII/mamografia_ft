@@ -17,7 +17,7 @@ class PacienteAdmin(admin.ModelAdmin):
 
 
 class MamografiaAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'external_id', 'paciente', 'resultado',
+    list_display = ('pk', 'external_id', 'paciente', 'resultado', 'lado_mamario',
                     'descripcion', 'createdAt', 'updatedAt')
     inlines = [MamografiaImageInLine]
 
