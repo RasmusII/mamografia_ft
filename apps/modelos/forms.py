@@ -136,7 +136,6 @@ class MamografiaForm(forms.ModelForm):
             required=True,
         ),
     )
-
     class Meta:
         model = Mamografia
         fields = "__all__"

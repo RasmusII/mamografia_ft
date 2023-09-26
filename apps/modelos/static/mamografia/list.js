@@ -14,25 +14,35 @@ $(document).ready(() => {
         },
         columns: [
             { "data": "id" },
+            { "data": "createdAt"},
             { "data": "lado_mamario" },
             { "data": "resultado" },
-            { "data":  null},
+            { "data":  null},            
         ],
         columnDefs: [
             {
-                targets: [0, 1, 2],
+                targets: [0, 1, 2, 3],
                 class: 'text-center',
                 orderable: true
             },
             {
                 targets: [1], render: (data, type, row) => {
+                    console.log("Fecha original:", data); // Depuración
+                    let fecha = moment(data, 'YYYY-MM-DD').format('DD/MM/YYYY');
+                    console.log("Fecha formateada:", fecha); // Depuración
+                    let html = `${fecha} `;
+                    return html;
+                }
+            },
+            {
+                targets: [2], render: (data, type, row) => {
                     let orientacion = row.lado_mamario == 0 ? 'Derecha' : 'Izquerda';
                     let html = `${orientacion} `;
                     return html;
                 }
             },
             {
-                targets: [2], render: (data, type, row) => {
+                targets: [3], render: (data, type, row) => {
                     let cancer = row.resultado == 0 ? 'Cancer' : 'Normal';
                     let html = `${cancer} `;
                     return html;
