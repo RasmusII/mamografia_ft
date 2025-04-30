@@ -1,0 +1,22 @@
+<script>
+    {% if messages %}
+        let html = "<p>";
+        let icon = "";
+        {% for message in messages %}
+            icon = "{{ message.tags }}";
+            html += "{{ message | safe }}";
+        {% endfor %}
+        html += "</p>";
+        Swal.fire({
+            title: "Información",
+            html: html,
+            icon: icon,
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: true,
+            confirmButtonText: "CONFIRMAR",
+            confirmButtonColor: "#4e73df",
+            allowOutsideClick: false,
+        });
+    {% endif %}
+</script>

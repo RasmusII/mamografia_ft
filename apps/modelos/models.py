@@ -10,6 +10,7 @@ from django.forms import model_to_dict
 import uuid
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+import os
 
 
 # Create your models here.
@@ -89,6 +90,16 @@ class Paciente(models.Model):
     def __str__(self):
         return self.apellidos() + " " + self.nombre
 
+def file_directory_path(instance, filename):
+    ext = os.path.splitext(filename)[1]
+    paciente = instance.paciente
+    filename = f"{paciente}_{uuid.uuid4()}{ext}"
+    file_path = os.path.join(
+        paciente,  # pylint: disable=protected-access
+        filename,
+    )
+
+    return file_path
 
 class Mamografia(models.Model):
     NORMAL = 1
@@ -144,10 +155,12 @@ class MamografiaImage(models.Model):
         (VERTICAL, "Vertical"),
         (HORIZONTAL, "Horizontal"),
     )
+    
+    paciente = models.CharField(max_length=10, blank=False, null=False)
 
     external_id = models.UUIDField(default=uuid.uuid4, editable=False, null=False)
     imagen = models.ImageField(
-        upload_to="mamografia/%Y/%m/%d",
+        upload_to=file_directory_path,
         null=True,
         blank=True,
         verbose_name="mamografia",
@@ -177,13 +190,13 @@ class MamografiaUploadFile(models.Model):
     )
 
     imagen_horizontal = models.ImageField(
-        upload_to="mamografia/%Y/%m/%d",
+        upload_to=file_directory_path,
         null=True,
         blank=True,
         verbose_name="horizontal",
     )
     imagen_vertical = models.ImageField(
-        upload_to="mamografia/%Y/%m/%d", null=True, blank=True, verbose_name="vertical"
+        upload_to=file_directory_path, null=True, blank=True, verbose_name="vertical"
     )
     lado_mamario = models.PositiveBigIntegerField(
         default=DERECHA,
@@ -215,3 +228,21 @@ def post_save_receiver(sender, instance, **kwargs):
     )
 
     MamografiaAppService.procesar_datos(instance)
+    
+
+
+class FileUploaded(models.Model):
+    """Clase que representa un archivo cargado"""
+    file = models.FileField(upload_to=file_directory_path, null=True, blank=True)
+    app_label = models.CharField(max_length=255, blank=True)
+    model_name = models.CharField(max_length=255, blank=True)
+    paciente = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        db_table = "file_uploaded"
+        verbose_name = "file uploaded"
+        verbose_name_plural = "file uploaded"
+        ordering = ["id"]
+
+    def _str_(self):
+        return f"File Uploaded: {self.file}"

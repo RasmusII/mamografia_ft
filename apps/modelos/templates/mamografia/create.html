@@ -18,18 +18,22 @@
                 <div class="form-group col-12">
                     <label for="id_resultado">Lado Mamario</label>
                     <select name="lado_mamario" id="id_lado_mamario" class="form-control">
-                        <option value="">Seleccione</option>
-                        <option value="0" {%if mamografia.lado_mamario == 0 %} selected {% endif %}> Mama Derecha</option>
-                        <option value="1" {%if mamografia.lado_mamario == 1 %} selected {% endif %}> Mama Izquierda</option>
+                        <option>Seleccione</option>
+                        <option value="0" {% if mamografia.lado_mamario == 0 %} selected {% endif %}> Mama Derecha
+                        </option>
+                        <option value="1" {% if mamografia.lado_mamario == 1 %} selected {% endif %}> Mama Izquierda
+                        </option>
                     </select>
                 </div>
                 <div class="col-6 ">
-                    <h3><span class="badge bg-primary mr-4">Vertical </span></h3>
-                    <img src="{% if mamografia.imagen_vertical %} {{mamografia.imagen_vertical.url}} {% else %} {{imagen.1.imagen.url}} {% endif %}" width="400px" height="300px" id="image_left">
+                    <h4><span class="badge bg-primary mr-4">Craneo Caudal </span></h4>
+                    <img src="{% if mamografia.imagen_vertical %} {{mamografia.imagen_vertical.url}} {% else %} {{imagen.1.imagen.url}} {% endif %}"
+                        width="600px" height="700px" id="image_left">
                 </div>
                 <div class="col-6">
-                    <h3><span class="badge bg-primary mr-4">Horizontal </span></h3>
-                    <img src="{% if mamografia.imagen_horizontal %} {{mamografia.imagen_horizontal.url}} {% else %} {{imagen.0.imagen.url}} {% endif %}" width="400px" height="300px" id="image_right">
+                    <h4><span class="badge bg-primary mr-4">Medio Lateral Oblicua </span></h4>
+                    <img src="{% if mamografia.imagen_horizontal %} {{mamografia.imagen_horizontal.url}} {% else %} {{imagen.0.imagen.url}} {% endif %}"
+                        width="600px" height="700px" id="image_right">
                 </div>
             </div>
             <hr>
@@ -37,15 +41,26 @@
                 <label for="id_resultado">Resultado</label>
                 <select name="resultado" id="id_resultado" class="form-control">
                     <option value="">Seleccione</option>
-                    <option value="0" {%if prediction == 0  or mamografia.resultado == 0 %} selected {% endif %}>Cancer</option>
-                    <option value="1" {%if prediction == 1 or mamografia.resultado == 1 %} selected {% endif %}>Normal</option>
+                    <option value="0" {% if prediction == 0 or mamografia.resultado == 0 %} selected {% endif %}>Cancer
+                    </option>
+                    <option value="1" {% if prediction == 2 or mamografia.resultado == 2 %} selected {% endif %}>Normal
+                    </option>
                 </select>
             </div>
+            {% if action == 'add' %}
             <div class="form-group">
                 <label for="id_descripcion">Descripcion</label>
-                <input type="text" name="descripcion" class="form-control" required maxlenght="'1024" id="id_descripcion" value="{% if prediction == 0 %} En las imágenes se ha detectado Cáncer {% else %} En las imágenes no se ha detectado Cáncer {% endif %}">
+                <input type="text" name="descripcion" class="form-control" required maxlenght="'1024"
+                    id="id_descripcion"
+                    value="{% if prediction == 0 %} En las imágenes se ha detectado Cáncer {% else %} En las imágenes no se ha detectado Cáncer {% endif %}">
             </div>
-
+            {% else %}
+            <div class="form-group">
+                <label for="id_descripcion">Descripcion</label>
+                <input type="text" name="descripcion" class="form-control" required maxlenght="'1024"
+                    id="id_descripcion" value="{{mamografia.descripcion.upper}}">
+            </div>
+            {% endif %}
             <div class="text-center p-2">
                 <button type="submit" class="btn btn-primary mr-3">Confirmar</button>
                 <a href="{% url 'core:pacientes_list' %}" class="btn btn-outline-secondary">Cancelar</a>
@@ -57,5 +72,5 @@
 {% endblock %}
 
 {% block javascript %}
-    
+
 {% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block body_url %}
+<ol class="breadcrumb float-sm-right">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'core:pacientes_list' %}" class="active">Mamografía</a></li>
+</ol>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card card-outline card-secondary">
+            <div class="card-body">
+                <div class="row">
+                    {% for field in form %}
+                    <div class="col-md-12 ">
+                        {{ field|attr:"multiple" |attr:"webkitdirectory" |attr:"directory" }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-save mr-1"></i>Guardar
+            </button>
+        </div>
+    </form>
+{% endblock %}

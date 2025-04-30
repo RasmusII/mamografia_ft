@@ -1,6 +1,8 @@
-Django==4.1.6
+Django==4.2
 Pillow==9.4.0
 numpy
-django-crispy_forms
+django-crispy-forms==2.1
 django-widget_tweaks
 tensorflow==2.10.0
+opencv-python==4.11.0.86
+crispy-bootstrap4==2023.1
