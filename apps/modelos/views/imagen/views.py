@@ -22,30 +22,17 @@ import os
 # Create your views here.
 
 
-def home(self):
-    model = f'{BASE_DIR}{MEDIA_URL}modelo_deteccion_Cancer_mama_vgg16.h5'
-    # Benigno: 0
-    # Cancer: 1
-    # Normal: 2
+# def home(self):
+#     model = f'{BASE_DIR}{MEDIA_URL}modelo_deteccion_Cancer_mama_vgg16.h5'
 
-    modelo = load_model(model)
-    modelo.compile(
-        optimizer=tf.keras.optimizers.Adagrad(1.0e-4),
-        loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-        metrics=['accuracy']
-    )
-    if not modelo:
-        print('Error carga de Modelo')
+#     modelo = load_model(model)
+#     modelo.compile(
+#         optimizer=tf.keras.optimizers.Adagrad(1.0e-4),
+#         loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+#         metrics=['accuracy']
+#     )
 
-    image = tf.keras.utils.load_img(
-        'D:\DATASET CANCER MAMA\DATASET CANCER/archive\MINI-DDSM-Complete-JPEG-8/train\Maligno\A_1329_1.LEFT_CC.jpg', target_size=(255, 255))
-    image_array = img_to_array(image)
-
-    prediction = modelo.predict(image_array[(None, ...)])
-
-    print(prediction)
-
-    return JsonResponse({'Modelo_path': model})
+#     return JsonResponse({'Modelo_path': model})
 
 
 class CatalogListView(ListView):

@@ -13,14 +13,14 @@ def load_custom_model():
     from core.settings.develop import MEDIA_URL, BASE_DIR
 
     # Ruta al modelo previamente entrenado
-    MODEL_PATH = f"{BASE_DIR}{MEDIA_URL}modelo/modelo_deteccion_Cancer_mama_densenet_final.h5"
+    MODEL_PATH = f"{BASE_DIR}{MEDIA_URL}modelo/modelo_deteccion_Cancer_mama_densenet_final2.h5"
     
     # Carga el modelo
     loaded_model = load_model(MODEL_PATH)
     loaded_model.compile(
-            optimizer=tf.keras.optimizers.Adam(1e-4),
-            loss=tf.keras.losses.BinaryCrossentropy(),
-            metrics=["accuracy"],
+            optimizer=tf.keras.optimizers.SGD(learning_rate=1e-5, momentum=0.9),
+            loss=tf.keras.losses.SparseCategoricalCrossentropy(), 
+            metrics=['accuracy']
     )
     
     with tf.device('/GPU:0'):

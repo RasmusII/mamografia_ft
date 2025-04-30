@@ -1,7 +1,33 @@
 from datetime import datetime
 from django import forms
+from crispy_forms.helper import FormHelper
+from django.contrib.auth.forms import AuthenticationForm
+from django.utils.translation import gettext_lazy as _
 from apps.modelos.models import *
 
+
+class SignInForm(AuthenticationForm):
+    username = forms.CharField(
+        required=False,
+        label=_("Username or email"),
+        widget=forms.TextInput(attrs={"class": "form-control", "autofocus": "true"}),
+    )
+    password = forms.CharField(
+        required=False,
+        label=_("Password"),
+        widget=forms.PasswordInput(attrs={"class": "form-control"}),
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ["username", "password"]
+
+    def _init_(self, *args, **kwargs):
+        super()._init_(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_show_errors = True
+        self.helper.error_text_inline = True
+        self.helper.label_class = "form-label text-sm"
 
 class CustomUserForm(forms.ModelForm):
     class Meta:
@@ -175,6 +201,27 @@ class MamografiaImageForm(forms.ModelForm):
         }
 
 
+class FileUploadedForm(forms.ModelForm):
+    """Formulario que representa un item de un catalogo"""
+
+    file = forms.FileField(
+        label="Archivo",
+        widget=forms.FileInput(attrs={"class": "form-control", "multiple":True}),
+        help_text="Carge el archivo a subir",
+        required=True,
+    )
+
+    class Meta:
+        model = FileUploaded
+        fields = ["file"]
+
+    def _init_(self, *args, **kwargs):
+        super()._init_(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_show_errors = True
+        self.helper.error_text_inline = True
+        self.helper.label_class = "form-label"
+
 class MamografiaUploadForm(forms.ModelForm):
     """
     Formulario para la subida de mamografias
@@ -228,4 +275,3 @@ class MamografiaUploadForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if external is not None:
             self.fields["paciente"].initial = external
-            self.fields["descripcion"].initial = external

@@ -22,6 +22,14 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{% url 'core:mamografia_bulk' %}" class="nav-link">
+                        <i class="nav-icon fas fa-th"></i>
+                        <p>
+                            Carga Masiva
+                        </p>
+                    </a>
+                </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
@@ -29,7 +37,7 @@
     <!-- /.sidebar -->
 
     <div class="sidebar-custom">
-        <a href="{% url 'logout' %}" class="btn btn-link">Cerrar Sesión <i class="fas fa-times"></i></a>
+        <a href="{% url 'core:logout' %}" class="btn btn-link">Cerrar Sesión <i class="fas fa-times"></i></a>
     </div>
     <!-- /.sidebar-custom -->
 </aside>

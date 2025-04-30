@@ -1,3 +1,4 @@
+import django.contrib
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -8,6 +9,7 @@ from django.views.generic import CreateView, ListView, UpdateView
 from apps.modelos.models import Mamografia, MamografiaImage, MamografiaUploadFile
 from apps.modelos.forms import *
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 
 from apps.modelos.layers.application.service_app_upload_images import MamografiaAppService
 
@@ -77,18 +79,25 @@ class MamografiaUploadView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         if form.is_valid():
+            paciente = Paciente.objects.get(
+                external_id=self.kwargs.get("external")
+            )
             external_id = self.kwargs.get("external")
             mamografia_upload = form.save(commit=False)
-            mamografia_upload.paciente = external_id
+            mamografia_upload.paciente = paciente.cedula
             mamografia_upload.save()
 
             # Llama al servicio para procesar la mamografía y obtener el resultado
             resultado = MamografiaAppService.procesar_datos(mamografia_upload)
+            if 1 in resultado:
+                messages.error(self.request, "IMAGEN O IMAGENES INGRESADAS NO CORRESPONDEN A UNA MAMOGRAFIA")
+                return redirect(
+                    "core:mamografia_predict",
+                    external = external_id
+                )
             return redirect(
                 "core:mamografia_create",
-                result=(
-                    1 if float(resultado[0]) > 0.5 and float(resultado[1]) > 0.5 else 0
-                ),
+                result=max(resultado),
                 mamografia=mamografia_upload.id,
             )
 
@@ -120,7 +129,7 @@ class MamografiaCreate(LoginRequiredMixin, CreateView):
         if form.is_valid():
             form_instance = form.save(commit=False)
             form_instance.paciente = Paciente.objects.get(
-                external_id=mamografia_upload.paciente
+                cedula=mamografia_upload.paciente
             )
             form_instance.save()
             MamografiaImage.objects.create(
@@ -177,3 +186,20 @@ class MamografiaUpdateView(LoginRequiredMixin, UpdateView):
     @method_decorator(csrf_exempt, login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
+
+class MamografiaBulkCreate(LoginRequiredMixin, CreateView):
+    model = MamografiaUploadFile
+    form_class = FileUploadedForm
+    template_name = "mamografia/bulk.html"
+    success_url = reverse_lazy("core:pacientes_list")
+    
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+    
+    def form_valid(self, form):
+        print("hola", self.request.FILES.getlist('file'))
+        
+        MamografiaAppService.cargar_mamografias_masivamente(self.request.FILES.getlist('file'))
+        return redirect(self.success_url)
+        # return super().form_valid(form)
+    

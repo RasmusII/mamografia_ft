@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt  
@@ -17,11 +18,14 @@ class SignUpView(CreateView):
     success_url = reverse_lazy('login')
     template_name = 'registration/register.html'
 
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+    def post(self, form: BaseModelForm) -> HttpResponse:
         form = self.form_class(self.request.POST)
+
         if form.is_valid():
             data = form.save(commit=False)
             data.set_password(form.cleaned_data['password'])
             data.save()
-            
-        return redirect('login')
+            return redirect('login')
+        else:
+            return render(self.request, self.template_name, {'form': form})
+
