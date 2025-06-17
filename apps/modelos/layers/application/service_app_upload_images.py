@@ -60,29 +60,35 @@ class MamografiaAppService(object):
             )
 
             # Procesamiento del modelo
-            resultado = MamografiaAppService.procesar_datos(mamografia_upload)
+            result = MamografiaAppService.procesar_datos(mamografia_upload)
+            print("MAXIMO", (result))
             # Obtener el paciente y crear el registro principal
             paciente = Paciente.objects.filter(cedula__iexact=dni)
-            if paciente.exists():
-                mamografia = Mamografia.objects.create(
-                    paciente=paciente.first(),
-                    lado_mamario=lado_mamario,
-                    resultado=max(resultado)
-                )
-
-                # Crear imágenes asociadas
-                MamografiaImage.objects.create(
-                    imagen=mamografia_upload.imagen_horizontal.url.replace("/media", ""),
-                    orientacion=1,
-                    mamografia=mamografia,
-                    paciente=dni
-                )
-                MamografiaImage.objects.create(
-                    imagen=mamografia_upload.imagen_vertical.url.replace("/media", ""),
-                    orientacion=0,
-                    mamografia=mamografia,
-                    paciente=dni
-                )
+            if 1 not in result:
+                if 2 in result:
+                    result = [1, 1]
+                if paciente.exists():
+                    mamografia = Mamografia.objects.create(
+                        paciente=paciente.first(),
+                        lado_mamario=lado_mamario,
+                        resultado=max(result)
+                    )
+                    
+                    print("MAXIMO", max(result))
+                    
+                    # Crear imágenes asociadas
+                    MamografiaImage.objects.create(
+                        imagen=mamografia_upload.imagen_horizontal.url.replace("/media", ""),
+                        orientacion=1,
+                        mamografia=mamografia,
+                        paciente=dni
+                    )
+                    MamografiaImage.objects.create(
+                        imagen=mamografia_upload.imagen_vertical.url.replace("/media", ""),
+                        orientacion=0,
+                        mamografia=mamografia,
+                        paciente=dni
+                    )
 
 
 

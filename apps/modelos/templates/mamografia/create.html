@@ -43,7 +43,7 @@
                     <option value="">Seleccione</option>
                     <option value="0" {% if prediction == 0 or mamografia.resultado == 0 %} selected {% endif %}>Cancer
                     </option>
-                    <option value="1" {% if prediction == 2 or mamografia.resultado == 2 %} selected {% endif %}>Normal
+                    <option value="1" {% if prediction == 1 or mamografia.resultado == 1 or prediction == 2 or mamografia.resultado == 2 %} selected {% endif %}>Normal
                     </option>
                 </select>
             </div>
@@ -52,7 +52,7 @@
                 <label for="id_descripcion">Descripcion</label>
                 <input type="text" name="descripcion" class="form-control" required maxlenght="'1024"
                     id="id_descripcion"
-                    value="{% if prediction == 0 %} En las imágenes se ha detectado Cáncer {% else %} En las imágenes no se ha detectado Cáncer {% endif %}">
+                    value="{% if prediction == 0 %} En las imágenes se ha detectado una posibilidad de Cáncer {% else %} En las imágenes no es probable que haya Cáncer {% endif %}">
             </div>
             {% else %}
             <div class="form-group">
